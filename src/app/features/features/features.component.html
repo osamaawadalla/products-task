@@ -1,0 +1,68 @@
+<div class="features py-5">
+    <div class="container">
+        <h1 class="mb-4">Features</h1>
+
+        <!-- Start add feature -->
+        <div class="add-feature">
+            <div class="row">
+                <div class="col-md-6">
+                    <form #featureForm="ngForm" (ngSubmit)="addFeature(featureForm)">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                class="form-control form-control-lg" 
+                                placeholder="Add Feature"
+                                name="name"
+                                ngModel
+                                required
+                            >
+                            <button class="btn btn-outline-primary" [disabled]="!featureForm.valid">Button</button>
+                        </div>
+                    </form>
+                </div>    
+            </div>
+        </div>
+        <!-- End add feature -->
+
+        <!-- Start data table -->
+        <div class="data-table py-5">
+            <ngx-datatable 
+                [rows]="features" 
+                [columns]="columns"
+                class="material"
+                [headerHeight]="50"
+                [footerHeight]="50"
+                rowHeight="auto"    
+                [columnMode]="ColumnMode.force"
+                [limit]="5"
+            >
+            <ngx-datatable-column name="ID">
+                <ng-template ngx-datatable-cell-template let-value="value">
+                    {{ value }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Name">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                    <span
+                        title="Double click to edit"
+                        (dblclick)="editing[rowIndex + '-name'] = true"
+                        *ngIf="!editing[rowIndex + '-name']"
+                    >
+                        {{ value }}
+                    </span>
+                    <input
+                        autofocus
+                        (blur)="updateValue($event, 'name', rowIndex)"
+                        *ngIf="editing[rowIndex + '-name']"
+                        type="text"
+                        [value]="value"
+                        class="form-control"
+                    />
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+        <!-- End data table -->
+    </div>
+</div>

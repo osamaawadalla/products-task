@@ -74,23 +74,16 @@ export class FeaturesService {
     }
   }
 
-  deleteFeature(id: number): Observable<any> {
+  deleteFeature(ids: any[]): Observable<any> {
     let currentFeaturesStr: string = localStorage.getItem('features')!;
     if (currentFeaturesStr) {
       try {
         let currentFeaturesArr: any[] = JSON.parse(currentFeaturesStr);
-        const featureIndex: number = currentFeaturesArr.findIndex(feature => feature.id == id);
-        if (featureIndex == -1) {
-          return new Observable((observer) => {
-            observer.error({ code: 400, message: 'Not Found!' });
-          });
-        } else {
-          currentFeaturesArr.splice(featureIndex, 1);
-          localStorage.setItem('features', JSON.stringify(currentFeaturesArr));
-          return new Observable((observer) => {
-            observer.next({ code: 200, message: 'Feature deleted successfully!' });
-          });
-        }
+        currentFeaturesArr = currentFeaturesArr.filter(feature => !ids.includes(feature.id));
+        localStorage.setItem('features', JSON.stringify(currentFeaturesArr));
+        return new Observable((observer) => {
+          observer.next({ code: 200, message: 'Feature deleted successfully!' });
+        });
       } catch (error) {
         return new Observable((observer) => {
           observer.error({ code: 500, message: 'Something went wrong!' });

@@ -29,7 +29,6 @@
             <button class="btn btn-dark mb-3" [disabled]="checkBulkAction()" (click)="bulkAction()">Bulk action</button>
             <ngx-datatable 
                 [rows]="features" 
-                [columns]="columns"
                 class="material"
                 [headerHeight]="50"
                 [footerHeight]="50"
@@ -38,7 +37,7 @@
                 [limit]="5"
             >
                 <!-- bulk actions column -->
-                <ngx-datatable-column name="">
+                <ngx-datatable-column name="" [sortable]="false">
                     <ng-template ngx-datatable-cell-template let-row="row">
                         <div class="form-check">
                             <input 
@@ -79,9 +78,9 @@
                 </ngx-datatable-column>
 
                 <!-- actions column -->
-                <ngx-datatable-column name="">
-                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row">
-                        <button class="btn btn-outline-danger btn-icon" (click)="deleteFeature(row.id, rowIndex)">
+                <ngx-datatable-column name="" [sortable]="false">
+                    <ng-template ngx-datatable-cell-template let-row="row">
+                        <button class="btn btn-outline-danger btn-icon" (click)="deleteFeature(row.id)">
                             <i class="fa fa-trash-o"></i>
                         </button>
                     </ng-template>

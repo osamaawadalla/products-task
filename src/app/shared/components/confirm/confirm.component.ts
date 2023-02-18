@@ -10,7 +10,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ConfirmComponent {
 
-  @Input() itemType: string = 'Item';
+  @Input() title: string = 'Item Delete';
+  @Input() description: string = 'Are you sure to permanently delete this Item?';
 
   constructor(
     public modal: NgbActiveModal

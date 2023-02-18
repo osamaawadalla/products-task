@@ -1,5 +1,81 @@
 <div class="add-product py-5">
     <div class="container">
+        <h1 class="mb-4">Add Product</h1>
         
+        <!-- Start product form -->
+        <div class="product-form">
+            <form [formGroup]="formGroup" (ngSubmit)="submitForm()">
+                <div class="row">
+                    <!-- code input -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="codeFormControlInput" class="form-label">Code</label>
+                            <input 
+                                type="text" 
+                                class="form-control form-control-lg" 
+                                id="codeFormControlInput" 
+                                placeholder="Code"
+                                formControlName="code"    
+                            >
+                        </div>
+    
+                        <!-- name input -->
+                        <div class="mb-3">
+                            <label for="nameFormControlInput" class="form-label">Name</label>
+                            <input 
+                                type="text" 
+                                class="form-control form-control-lg" 
+                                id="nameFormControlInput" 
+                                placeholder="Name"
+                                formControlName="name"    
+                            >
+                            <div class="invalid-feedback d-block" *ngIf="controlHasError('required', 'name')">
+                                Name is required!
+                            </div>
+                        </div>
+    
+                        <!-- price input -->
+                        <div class="mb-3">
+                            <label for="priceFormControlInput" class="form-label">Price</label>
+                            <input 
+                                type="number" 
+                                class="form-control form-control-lg" 
+                                id="priceFormControlInput" 
+                                placeholder="Price"
+                                formControlName="price"    
+                            >
+                            <div class="invalid-feedback d-block" *ngIf="controlHasError('required', 'price') || controlHasError('min', 'price')">
+                                Price is required!
+                            </div>
+                        </div>
+
+                        <!-- features input -->
+                        <div class="mb-3">
+                            <label for="featuresFormControlInput" class="form-label">Features</label>
+                            <ng-select 
+                                id="featuresFormControlInput"
+                                [items]="features" 
+                                bindLabel="name" 
+                                bindValue="id" 
+                                formControlName="features"
+                                [multiple]="true"
+                                placeholder="Features"
+                            >
+                            </ng-select>
+                            <div class="invalid-feedback d-block" *ngIf="controlHasError('required', 'features')">
+                                Feature is required!
+                            </div>
+                        </div>
+
+                        <!-- submit button-->
+                        <div class="buttons text-end mt-5">
+                            <button class="btn btn-primary">{{ productId ? "Edit" : "Add" }} Product</button>
+                        </div>
+                    </div>
+    
+                </div>
+            </form>
+        </div>
+        <!-- End product form -->
     </div>
 </div>

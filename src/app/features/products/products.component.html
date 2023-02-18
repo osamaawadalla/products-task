@@ -1,1 +1,161 @@
-products Page!
+<div class="products py-5">
+    <div class="container">
+        <h1 class="mb-4 d-flex align-items-center justify-content-between">
+            Products
+            <a class="btn btn-primary" routerLink="/products/add">Add Product</a>
+        </h1>
+
+        <!-- Start filter products -->
+        <div class="filter-products">
+            <form #filterForm="ngForm" (ngSubmit)="filterProducts(filterForm)">
+                <div class="row">
+
+                    <!-- code input -->
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label for="codeFormControlInput" class="form-label">Code</label>
+                        <input 
+                            type="text" 
+                            class="form-control form-control-lg" 
+                            id="codeFormControlInput" 
+                            placeholder="Code"
+                            name="code"  
+                            ngModel  
+                        >
+                    </div>
+
+                    <!-- name input -->
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label for="nameFormControlInput" class="form-label">Name</label>
+                        <input 
+                            type="text" 
+                            class="form-control form-control-lg" 
+                            id="nameFormControlInput" 
+                            placeholder="Name"
+                            name="name" 
+                            ngModel   
+                        >
+                    </div>
+
+                    <!-- price input -->
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label for="priceFormControlInput" class="form-label">Price</label>
+                        <input 
+                            type="number" 
+                            class="form-control form-control-lg" 
+                            id="priceFormControlInput" 
+                            placeholder="Price"
+                            name="price"    
+                            ngModel
+                        >
+                    </div>
+
+                    <!-- features input -->
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label for="featuresFormControlInput" class="form-label">Features</label>
+                        <ng-select 
+                            id="featuresFormControlInput"
+                            [items]="features" 
+                            bindLabel="name" 
+                            bindValue="id" 
+                            name="features"
+                            [multiple]="true"
+                            placeholder="Features"
+                            ngModel
+                        >
+                        </ng-select>
+                    </div>
+
+                </div>
+
+                <div class="buttons text-end">
+                    <button class="btn btn-success">Filter</button>
+                </div>
+            </form>
+        </div>
+        <!-- End filter products -->
+
+        <!-- Start data table -->
+        <div class="data-table py-5">
+            <button class="btn btn-dark mb-3" [disabled]="checkBulkAction()" (click)="bulkAction()">Bulk action</button>
+            <ngx-datatable 
+                [rows]="filteredProducts" 
+                class="material"
+                [headerHeight]="50"
+                [footerHeight]="50"
+                rowHeight="auto"    
+                [columnMode]="ColumnMode.force"
+                [limit]="5"
+            >
+                <!-- bulk actions column -->
+                <ngx-datatable-column name="" [sortable]="false">
+                    <ng-template ngx-datatable-cell-template let-row="row">
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="row.selection"
+                            >
+                        </div>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <!-- id column -->
+                <ngx-datatable-column name="ID">
+                    <ng-template ngx-datatable-cell-template let-value="value">
+                        {{ value }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <!-- code column -->
+                <ngx-datatable-column name="Code">
+                    <ng-template ngx-datatable-cell-template let-value="value">
+                        {{ value }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <!-- name column -->
+                <ngx-datatable-column name="Name">
+                    <ng-template ngx-datatable-cell-template let-value="value">
+                        {{ value }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <!-- price column -->
+                <ngx-datatable-column name="Price">
+                    <ng-template ngx-datatable-cell-template let-value="value">
+                        {{ value }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                 <!-- name column -->
+                 <ngx-datatable-column name="Features">
+                    <ng-template ngx-datatable-cell-template let-value="value">
+                        <span *ngFor="let feature of value; let last = last">
+                            {{ getFeatureName(feature) }}<ng-container *ngIf="!last">,</ng-container>
+                        </span>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <!-- last update column -->
+                <ngx-datatable-column name="Last Update" prop="lastupdated">
+                    <ng-template ngx-datatable-cell-template let-value="value">
+                        {{ value | date: 'd-M-yy h:mm:ss a' }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <!-- actions column -->
+                <ngx-datatable-column name="" [sortable]="false">
+                    <ng-template ngx-datatable-cell-template let-row="row">
+                        <a class="btn btn-outline-secondary btn-icon me-2" routerLink="/products/edit/{{row.id}}">
+                            <i class="fa fa-pencil-square-o"></i>
+                        </a>
+                        <button class="btn btn-outline-danger btn-icon" (click)="deleteProduct(row.id)">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+        <!-- End data table -->
+    </div>
+</div>

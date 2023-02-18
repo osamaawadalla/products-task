@@ -1,5 +1,19 @@
-<h1 mat-dialog-title>Dialog with elements</h1>
-<div mat-dialog-content>This dialog showcases the title, close, content and actions elements.</div>
-<div mat-dialog-actions>
-  <button mat-button mat-dialog-close>Close</button>
+<h1 mat-dialog-title>Bulk action</h1>
+<div mat-dialog-content>
+    <h3>Choose a bulk action to perform!</h3>
+    <mat-form-field appearance="fill">
+        <mat-label>Choose action</mat-label>
+        <mat-select name="action" [(ngModel)]="selectedAction">
+            <mat-option 
+                *ngFor="let action of data?.actions" 
+                [value]="action" 
+            >
+                {{action}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions class="justify-content-end">
+    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button color="warn" (click)="submit()" [disabled]="!selectedAction">Submit</button>
 </div>

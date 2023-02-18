@@ -5,8 +5,6 @@ import { ColumnMode, NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { Feature } from 'src/app/core/models/feature';
-import { BulkActionDialogComponent } from 'src/app/shared/components/bulk-action-dialog/bulk-action-dialog.component';
-import { ConfirmComponent } from 'src/app/shared/components/confirm/confirm.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FeaturesService } from './services/features.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -19,8 +17,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     FormsModule,
     NgxDatatableModule,
     NgbModule,
-    ConfirmComponent,
-    BulkActionDialogComponent,
     MatDialogModule
   ],
   providers: [FeaturesService],
@@ -30,11 +26,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 export class FeaturesComponent implements OnInit, OnDestroy {
 
   features: Feature[] = [];
-  columns: any[] = [
-    { prop: 'id', name: 'ID' },
-    { prop: 'name', name: 'Name' },
-    { name: 'Actions' }
-  ];
 
   ColumnMode = ColumnMode;
   editing: any = {};
@@ -57,15 +48,15 @@ export class FeaturesComponent implements OnInit, OnDestroy {
   }
 
   getFeatures(): void {
-    this.featuresService.getFeatures()
+    this.subscription.add(this.featuresService.getFeatures()
       .subscribe({
         next: res => {
           this.features = res.data;
         },
         error: err => {
-          this.toastr.success(err.message, '');
+          this.toastr.error(err.message, '');
         }
-      })
+      }))
   }
 
   addFeature(featureForm: NgForm): void {
@@ -95,6 +86,7 @@ export class FeaturesComponent implements OnInit, OnDestroy {
           },
           error: err => {
             this.toastr.error(err.message, '');
+            this.editing[rowIndex + '-' + cell] = false;
           }
         }))
     } else {
@@ -102,25 +94,29 @@ export class FeaturesComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteFeature(id: number, rowIndex: number): void {
-    const modalRef = this.modalService.open(ConfirmComponent);
-    modalRef.componentInstance.itemType = 'Feature';
-    modalRef.result.then(
-      () => { },
-      (result) => {
-        if (result) {
-          this.delete(id, rowIndex);
-        }
+  deleteFeature(id: number): void {
+    import('../../shared/components/confirm/confirm.component').then(
+      ({ ConfirmComponent }) => {
+        const modalRef = this.modalService.open(ConfirmComponent);
+        modalRef.componentInstance.title = 'Feature Delete';
+        modalRef.componentInstance.description = 'Are you sure to permanently delete this Feature?';
+        modalRef.result.then(
+          () => { },
+          (result) => {
+            if (result) {
+              this.delete([id]);
+            }
+          }
+        );
       }
-    );
+    )
   }
 
-  delete(id: number, rowIndex: number) {
-    this.subscription.add(this.featuresService.deleteFeature(id)
+  delete(ids: any[]): void {
+    this.subscription.add(this.featuresService.deleteFeature(ids)
       .subscribe({
         next: res => {
-          this.features.splice(rowIndex, 1);
-          this.features = [...this.features];
+          this.getFeatures();
           this.toastr.success(res.message, '');
         },
         error: err => {
@@ -139,23 +135,23 @@ export class FeaturesComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  bulkAction() {
-    const dialogRef = this.matDialog.open(BulkActionDialogComponent, {
-      width: "600px",
-      data: {
-        selectedRow: this.features.filter((feature: any) => feature.selection)
+  bulkAction(): void {
+    import('../../shared/components/bulk-action-dialog/bulk-action-dialog.component').then(
+      ({ BulkActionDialogComponent }) => {
+        const dialogRef = this.matDialog.open(BulkActionDialogComponent, {
+          width: "600px",
+          data: {
+            actions: ['delete']
+          }
+        })
+
+        this.subscription.add(dialogRef.afterClosed().subscribe((result: any) => {
+          if (result == 'delete') {
+            this.delete(this.features.filter((feature: any) => feature.selection).map(feature => feature.id));
+          }
+        }))
       }
-    })
-    dialogRef.afterClosed().subscribe((res: any) => {
-      // if (res == 'updated') {
-      //   this.selection.clear();
-      //   let data: TableActions = {
-      //     actionType: 'update_bulk_action',
-      //     payload: {}
-      //   }
-      //   this.onAction.emit(data);
-      // }
-    })
+    )
   }
 
 }

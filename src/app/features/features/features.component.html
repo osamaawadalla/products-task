@@ -26,6 +26,7 @@
 
         <!-- Start data table -->
         <div class="data-table py-5">
+            <button class="btn btn-dark mb-3" [disabled]="checkBulkAction()" (click)="bulkAction()">Bulk action</button>
             <ngx-datatable 
                 [rows]="features" 
                 [columns]="columns"
@@ -36,29 +37,53 @@
                 [columnMode]="ColumnMode.force"
                 [limit]="5"
             >
-            <ngx-datatable-column name="ID">
-                <ng-template ngx-datatable-cell-template let-value="value">
-                    {{ value }}
-                </ng-template>
-            </ngx-datatable-column>
+                <!-- bulk actions column -->
+                <ngx-datatable-column name="">
+                    <ng-template ngx-datatable-cell-template let-row="row">
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="row.selection"
+                            >
+                        </div>
+                    </ng-template>
+                </ngx-datatable-column>
 
-            <ngx-datatable-column name="Name">
-                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
-                    <span
-                        title="Double click to edit"
-                        (dblclick)="editing[rowIndex + '-name'] = true"
-                        *ngIf="!editing[rowIndex + '-name']"
-                    >
+                <!-- id column -->
+                <ngx-datatable-column name="ID">
+                    <ng-template ngx-datatable-cell-template let-value="value">
                         {{ value }}
-                    </span>
-                    <input
-                        autofocus
-                        (blur)="updateValue($event, 'name', rowIndex)"
-                        *ngIf="editing[rowIndex + '-name']"
-                        type="text"
-                        [value]="value"
-                        class="form-control"
-                    />
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <!-- name column -->
+                <ngx-datatable-column name="Name">
+                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value">
+                        <span
+                            title="Double click to edit"
+                            (dblclick)="editing[rowIndex + '-name'] = true"
+                            *ngIf="!editing[rowIndex + '-name']"
+                        >
+                            {{ value }}
+                        </span>
+                        <input
+                            autofocus
+                            (blur)="updateValue($event, 'name', rowIndex)"
+                            *ngIf="editing[rowIndex + '-name']"
+                            type="text"
+                            [value]="value"
+                            class="form-control"
+                        />
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <!-- actions column -->
+                <ngx-datatable-column name="">
+                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row">
+                        <button class="btn btn-outline-danger btn-icon" (click)="deleteFeature(row.id, rowIndex)">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
                     </ng-template>
                 </ngx-datatable-column>
             </ngx-datatable>

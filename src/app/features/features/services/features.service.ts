@@ -52,4 +52,55 @@ export class FeaturesService {
     });
   }
 
+  updateFeatures(id: number, name: string): Observable<any> {
+    let currentFeaturesStr: string = localStorage.getItem('features')!;
+    if (currentFeaturesStr) {
+      try {
+        let currentFeaturesArr: any[] = JSON.parse(currentFeaturesStr);
+        currentFeaturesArr.find(feature => feature.id == id).name = name;
+        localStorage.setItem('features', JSON.stringify(currentFeaturesArr));
+        return new Observable((observer) => {
+          observer.next({ code: 200, message: 'Feature updated successfully!' });
+        });
+      } catch (error) {
+        return new Observable((observer) => {
+          observer.error({ code: 500, message: 'Something went wrong!' });
+        });
+      }
+    } else {
+      return new Observable((observer) => {
+        observer.error({ code: 400, message: 'Not Found!' });
+      });
+    }
+  }
+
+  deleteFeature(id: number): Observable<any> {
+    let currentFeaturesStr: string = localStorage.getItem('features')!;
+    if (currentFeaturesStr) {
+      try {
+        let currentFeaturesArr: any[] = JSON.parse(currentFeaturesStr);
+        const featureIndex: number = currentFeaturesArr.findIndex(feature => feature.id == id);
+        if (featureIndex == -1) {
+          return new Observable((observer) => {
+            observer.error({ code: 400, message: 'Not Found!' });
+          });
+        } else {
+          currentFeaturesArr.splice(featureIndex, 1);
+          localStorage.setItem('features', JSON.stringify(currentFeaturesArr));
+          return new Observable((observer) => {
+            observer.next({ code: 200, message: 'Feature deleted successfully!' });
+          });
+        }
+      } catch (error) {
+        return new Observable((observer) => {
+          observer.error({ code: 500, message: 'Something went wrong!' });
+        });
+      }
+    } else {
+      return new Observable((observer) => {
+        observer.error({ code: 400, message: 'Not Found!' });
+      });
+    }
+  }
+
 }

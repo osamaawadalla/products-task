@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { FooterComponent } from './layout/footer/footer.component';
 import { NavbarComponent } from './layout/navbar/navbar.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { NavbarComponent } from './layout/navbar/navbar.component';
   imports: [
     NavbarComponent,
     FooterComponent,
-    CoreModule
+    CoreModule,
+    BrowserAnimationsModule
   ],
   providers: [
     provideRouter(appRoutes)
